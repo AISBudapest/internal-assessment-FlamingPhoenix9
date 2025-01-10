@@ -177,7 +177,7 @@ def notify():
 
 scheduler.add_job(func=notify, trigger='interval', seconds = 120, id='notifs')
 scheduler.start()
-app.run(debug=True)
+# app.run(debug=True)
 
 
 #email app password: hxqg qban uwxu spns
