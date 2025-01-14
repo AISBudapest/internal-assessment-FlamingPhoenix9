@@ -47,3 +47,11 @@ code {
 li {
     font-size: 16px; 
 }
+.maps-column{
+    display: inline-block;
+    align-items: flex-start;    
+    text-align: left;
+}
+.map-row {
+    display: flex;   
+}

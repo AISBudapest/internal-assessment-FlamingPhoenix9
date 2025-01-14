@@ -14,9 +14,17 @@ app = Flask(__name__)
 app.secret_key="__privatekey__"
 scheduler = APScheduler()
 
-res = requests.get('https://api.brawlify.com/v1/events')
-response = json.loads(res.text)
+data = {'active_maps': [], 'upcoming_maps': []}
 
+def update_data():
+    res = requests.get('https://api.brawlify.com/v1/events')
+    response = json.loads(res.text)
+    active_maps = response.get("active", [])
+    data['active_map_names'] = [map_info["map"]["name"] for map_info in active_maps if "map" in map_info]
+    upcoming_maps = response.get("upcoming", [])
+    data['upcoming_map_names'] = [map_info["map"]["name"] for map_info in upcoming_maps if "map" in map_info]
+
+update_data()
 #https://stackoverflow.com/questions/31270488/navigating-json-in-python
 
 #source - https://stackoverflow.com/questions/68429566/how-to-return-render-template-in-flask
@@ -27,22 +35,6 @@ response = json.loads(res.text)
 def defaultHome():
     brawlStarsMapTrackerRegistrationForm=BrawlStarsMapTrackerRegistrationForm()
     return render_template('login.html',form=brawlStarsMapTrackerRegistrationForm)
-
-def fetch_active_map_names():
-    active_maps = response.get("active", [])
-    active_map_names = [map_info["map"]["name"] for map_info in active_maps if "map" in map_info]
-    return active_map_names
-
-def fetch_upcoming_map_names():
-    upcoming_maps = response.get("upcoming", [])
-    upcoming_map_names = [map_info["map"]["name"] for map_info in upcoming_maps if "map" in map_info]
-    return upcoming_map_names
-    
-active_map_names = fetch_active_map_names()
-print("Active maps:", active_map_names)
-
-upcoming_map_names = fetch_upcoming_map_names()
-print("Upcoming maps:", upcoming_map_names)
 
 def create_table():
     con = sqlite3.connect('user1.db')
@@ -76,7 +68,7 @@ def home():
             email = request.form.get('setEmail')
             print(f"Map entered by user: {map_name}")
             if map_name:
-                if map_name in active_map_names or  map_name in upcoming_map_names:
+                if map_name in data['active_map_names'] or  map_name in data['upcoming_map_names']:
                     c.execute("SELECT * FROM favoriteMaps WHERE user_name = ? AND map_name = ?", (username, map_name))
                     if c.fetchone():
                         message = f"'{map_name}' is already in your favorites."
@@ -102,8 +94,8 @@ def home():
             'index.html',
             form=brawlStarsMapTrackerRegistrationForm,
             favorites=user_favorites,
-            active_maps=active_map_names,
-            upcoming_maps=upcoming_map_names,
+            active_maps=data['active_map_names'],
+            upcoming_maps=data['upcoming_map_names'],
             message=message,
             username=username,
             email=user_email
@@ -195,8 +187,8 @@ def successformsubmission():
     return render_template('successformsubmission.html')
 
 def notify():
-    active_map_names = fetch_active_map_names()
-    notify_users(active_map_names)
+    update_data()
+    notify_users(data['active_map_names'])
 
 scheduler.add_job(func=notify, trigger='interval', seconds = 120, id='notifs')
 scheduler.start()
