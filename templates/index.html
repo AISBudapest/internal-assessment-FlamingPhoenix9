@@ -22,7 +22,8 @@
                         {% for favorite in favorites %}
                         <li>
                             {{ favorite }}
-                            <form action="{{ url_for('remove_favorite', map_name=favorite) }}" method="POST" style="display:inline;">
+                            <form action="{{url_for('remove_favorite')}}" method="POST" style="display:inline;">
+                                <input type="hidden" name="map_name" value="{{favorite}}">
                                 <button type="submit" class="btn btn-danger">Remove</button>
                             </form>
                         </li>
@@ -33,7 +34,12 @@
                     <p style="font-size: 20px">Active Maps</p>
                     <ul>
                         {% for map in active_maps %}
-                        <li>{{ map }}</li>
+                        <li>{{ map }}
+                            <form action="{{url_for('add_favorite')}}" method="POST" style="display:inline;">
+                                <input type="hidden" name="map_name" value="{{map}}">
+                                <button type="submit" class="btn btn-danger">Add to Favorites</button>
+                            </form>
+                        </li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -41,7 +47,12 @@
                     <p style="font-size: 20px">Upcoming Maps</p>
                     <ul>
                         {% for map in upcoming_maps %}
-                        <li>{{ map }}</li>
+                        <li>{{ map }}
+                            <form action="{{url_for('add_favorite')}}" method="POST" style="display:inline;">
+                                <input type="hidden" name="map_name" value="{{map}}">
+                                <button type="submit" class="btn btn-danger">Add to Favorites</button>
+                            </form>
+                        </li>
                         {% endfor %}
                     </ul>
                 </div>

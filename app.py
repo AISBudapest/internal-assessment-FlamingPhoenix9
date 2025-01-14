@@ -70,7 +70,7 @@ def home():
         user_email = c.fetchone()
         if user_email:
             user_email = user_email[0]
-        message = None
+        message = request.args.get('message', None)
         if request.method == 'POST':
             map_name = request.form.get('addMaps')
             email = request.form.get('setEmail')
@@ -109,15 +109,38 @@ def home():
             email=user_email
         )
 @app.route('/remove_favorite', methods=['POST'])
-def remove_favorite(map_name):
+def remove_favorite():
     if 'username' not in session:
         return redirect('/login')
     username = session['username']
+    map_name = request.form.get('map_name')
     con = sqlite3.connect('user1.db')
     c = con.cursor()
     c.execute("DELETE FROM favoriteMaps WHERE user_name = ? AND map_name = ?", (username, map_name))
     con.commit()
-    return redirect('/home')
+    con.close()
+    message = f"{map_name} has been removed from favorites."
+    return redirect(f'/home?message={message}')
+    
+@app.route('/add_favorite', methods=['POST'])
+def add_favorite():
+    if 'username' not in session:
+        return redirect('/login')
+    username = session['username']
+    map_name = request.form.get('map_name')
+    message = None
+    con = sqlite3.connect('user1.db')
+    c = con.cursor()
+    c.execute("SELECT * FROM favoriteMaps WHERE user_name = ? AND map_name = ?", (username, map_name))
+    if c.fetchone():
+        message  = f"{map_name} is already in favorites."
+    else: 
+        c.execute("INSERT INTO favoriteMaps (user_name, map_name) VALUES (?, ?)", (username, map_name))
+        con.commit()
+        message = f"{map_name} has been added to favorites."
+    con.close()
+    return redirect(f'/home?message={message}')
+
   
 @app.route('/login', methods=['POST','GET'])
 def login():
