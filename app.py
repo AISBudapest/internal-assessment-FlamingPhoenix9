@@ -1,4 +1,4 @@
-from flask import Flask, flash, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect
 import requests
 import json 
 #https://cs50.readthedocs.io/libraries/cs50/python/
@@ -14,15 +14,20 @@ app = Flask(__name__)
 app.secret_key="__privatekey__"
 scheduler = APScheduler()
 
-data = {'active_maps': [], 'upcoming_maps': []}
+data = {'active_maps': [], 'upcoming_maps': [],'all_maps':[]}
 
 def update_data():
     res = requests.get('https://api.brawlify.com/v1/events')
+    res2 = requests.get('https://api.brawlify.com/v1/maps')
     response = json.loads(res.text)
+    response2 = json.loads(res2.text)
     active_maps = response.get("active", [])
     data['active_map_names'] = [map_info["map"]["name"] for map_info in active_maps if "map" in map_info]
     upcoming_maps = response.get("upcoming", [])
     data['upcoming_map_names'] = [map_info["map"]["name"] for map_info in upcoming_maps if "map" in map_info]
+    all_maps = response2.get("list",[])
+    data['all_map_names'] = [map_info["name"] for map_info in all_maps if "name" in map_info]
+
 
 update_data()
 #https://stackoverflow.com/questions/31270488/navigating-json-in-python
@@ -68,7 +73,7 @@ def home():
             email = request.form.get('setEmail')
             print(f"Map entered by user: {map_name}")
             if map_name:
-                if map_name in data['active_map_names'] or  map_name in data['upcoming_map_names']:
+                if map_name in data['all_map_names']:
                     c.execute("SELECT * FROM favoriteMaps WHERE user_name = ? AND map_name = ?", (username, map_name))
                     if c.fetchone():
                         message = f"'{map_name}' is already in your favorites."

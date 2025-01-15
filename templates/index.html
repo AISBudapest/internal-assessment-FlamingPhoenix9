@@ -60,19 +60,23 @@
                 </div>
                 <form method="POST" action="/home">
                     <label for="setEmail">Set Email for notifications:</label>
-                    <input type="text" id="setEmail" name="setEmail" placeholder="Enter Email Address..." required>
-                    <button type="submit">Set Email</button>
+                    <input type="email" id="setEmail" name="setEmail" placeholder="Enter Email Address..." required>
+                    <!--https://stackoverflow.com/questions/16849117/html-how-to-do-a-confirmation-popup-to-a-submit-button-and-then-send-the-reque-->
+                    <input type="submit" onclick="return confirmEmail()">
                 </form>
-
+                <!--https://stackoverflow.com/questions/11563638/how-do-i-get-the-value-of-text-input-field-using-javascript-->
+                <script>
+                    function confirmEmail(){
+                        const input = document.getElementById('setEmail').value;
+                        return confirm('Are you sure? Email address being linked: ' + input);
+                    }
+                </script>
                 <p style="font-size: 20px">Linked Email: {{ email }}</p>
                 <div class="header-menu-section">
                     <p><a class="anchor-button" href="{{url_for('logout')}}"><strong>Logout</strong></a></p>
                 </div>
         </header>
     </div>
-    
 </body>
-
-
 </html>
-        
+    
