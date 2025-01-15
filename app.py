@@ -22,11 +22,12 @@ def update_data():
     response = json.loads(res.text)
     response2 = json.loads(res2.text)
     active_maps = response.get("active", [])
-    data['active_map_names'] = [{'name': map_info["map"]["name"], 'game_mode_image_url': map_info["map"]["gameMode"]["imageUrl"]} for map_info in active_maps if "map" in map_info]
+    data['active_map_names'] = [map_info["map"]["name"] for map_info in active_maps if "map" in map_info]
     upcoming_maps = response.get("upcoming", [])
-    data['upcoming_map_names'] = [{'name': map_info["map"]["name"], 'game_mode_image_url': map_info["map"]["gameMode"]["imageUrl"]} for map_info in upcoming_maps if "map" in map_info]
+    data['upcoming_map_names'] = [map_info["map"]["name"] for map_info in upcoming_maps if "map" in map_info]
     all_maps = response2.get("list",[])
-    data['all_map_names'] = [{'name': map_info["name"], 'game_mode_image_url': map_info["gameMode"]["imageUrl"]} for map_info in all_maps if "name" in map_info]
+    data['all_map_names'] = [map_info["name"] for map_info in all_maps if "name" in map_info]
+    data['all_map_emojis'] = {map_info["name"]: map_info["gameMode"]["imageUrl"] for map_info in all_maps if "name" in map_info and "gameMode" in map_info}
 
 
 update_data()
@@ -101,6 +102,8 @@ def home():
             favorites=user_favorites,
             active_maps=data['active_map_names'],
             upcoming_maps=data['upcoming_map_names'],
+            all_maps=data['all_map_names'],
+            map_images=data['all_map_emojis'],
             message=message,
             username=username,
             email=user_email

@@ -22,6 +22,8 @@
                         <ol>
                             {% for favorite in favorites %}
                             <li>
+                                <!-- https://www.w3schools.com/html/html_images.asp -->
+                                <img src="{{ map_images[favorite] }}" alt="Game Mode Emoji" style="height: 30px; width: 30px; vertical-align: middle;">
                                 {{ favorite }}
                                 <form action="{{url_for('remove_favorite')}}" method="POST" style="display:inline;">
                                     <input type="hidden" name="map_name" value="{{favorite}}">
@@ -35,7 +37,9 @@
                         <p style="font-size: 20px">Active Maps</p>
                         <ul>
                             {% for map in active_maps %}
-                            <li> <img src="{{ map.game_mode_image_url }}" alt="Game Mode Emoji" style="width: 30px; vertical-align: middle;"> {{ map.name }} 
+                            <li> 
+                                <img src="{{ map_images[map] }}" alt="Game Mode Emoji" style="height: 30px; width: 30px; vertical-align: middle;">
+                                {{ map }}
                                 <form action="{{url_for('add_favorite')}}" method="POST" style="display:inline;">
                                     <input type="hidden" name="map_name" value="{{map}}">
                                     <button type="submit" class="btn btn-danger">Add to Favorites</button>
@@ -48,7 +52,9 @@
                         <p style="font-size: 20px">Upcoming Maps</p>
                         <ul>
                             {% for map in upcoming_maps %}
-                            <li> <img src="{{ map.game_mode_image_url }}" alt="Game Mode Emoji" style="width: 30px; vertical-align: middle;"> {{ map.name }}  
+                            <li> 
+                                <img src="{{ map_images[map] }}" alt="Game Mode Emoji" style="height: 30px; width: 30px; vertical-align: middle;">
+                                {{ map }} 
                                 <form action="{{url_for('add_favorite')}}" method="POST" style="display:inline;">
                                     <input type="hidden" name="map_name" value="{{map}}">
                                     <button type="submit" class="btn btn-danger">Add to Favorites</button>
