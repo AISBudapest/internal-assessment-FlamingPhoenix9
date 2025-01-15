@@ -35,7 +35,7 @@
                         <p style="font-size: 20px">Active Maps</p>
                         <ul>
                             {% for map in active_maps %}
-                            <li>{{ map }}
+                            <li> <img src="{{ map.game_mode_image_url }}" alt="Game Mode Emoji" style="width: 30px; vertical-align: middle;"> {{ map.name }} 
                                 <form action="{{url_for('add_favorite')}}" method="POST" style="display:inline;">
                                     <input type="hidden" name="map_name" value="{{map}}">
                                     <button type="submit" class="btn btn-danger">Add to Favorites</button>
@@ -48,7 +48,7 @@
                         <p style="font-size: 20px">Upcoming Maps</p>
                         <ul>
                             {% for map in upcoming_maps %}
-                            <li>{{ map }}
+                            <li> <img src="{{ map.game_mode_image_url }}" alt="Game Mode Emoji" style="width: 30px; vertical-align: middle;"> {{ map.name }}  
                                 <form action="{{url_for('add_favorite')}}" method="POST" style="display:inline;">
                                     <input type="hidden" name="map_name" value="{{map}}">
                                     <button type="submit" class="btn btn-danger">Add to Favorites</button>
