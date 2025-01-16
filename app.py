@@ -45,7 +45,7 @@ def defaultHome():
 def create_table():
     con = sqlite3.connect('user1.db')
     c = con.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS user1(name text, passWord text, email text)")
+    c.execute("CREATE TABLE IF NOT EXISTS user1(name text, passWord text, email text, notifications boolean)")
     c.execute("CREATE TABLE IF NOT EXISTS currentMaps(map_name text)")
     c.execute("CREATE TABLE IF NOT EXISTS favoriteMaps(user_name text, map_name text)")
     c.execute("CREATE TABLE IF NOT EXISTS notifications (map_name text,user_name text,notified_date text)")
@@ -69,6 +69,10 @@ def home():
         if user_email:
             user_email = user_email[0]
         message = request.args.get('message', None)
+        notifications_enabled = session.get('notifications_enabled', True)
+        c.execute("SELECT notifications FROM user1 WHERE name = ?", (username,))
+        result = c.fetchone()
+        notifications_enabled = result[0] if result else True
         if request.method == 'POST':
             map_name = request.form.get('addMaps')
             email = request.form.get('setEmail')
@@ -106,6 +110,7 @@ def home():
             map_images=data['all_map_emojis'],
             message=message,
             username=username,
+            notifications_enabled=notifications_enabled,
             email=user_email
         )
 @app.route('/remove_favorite', methods=['POST'])
@@ -177,7 +182,7 @@ def registrationform():
                 return render_template("error.html")
             else:
                 if not data:
-                    c.execute("INSERT INTO user1 (name,passWord) VALUES (?,?)",(name,passWord))
+                    c.execute("INSERT INTO user1 (name,passWord, notifications) VALUES (?,?,?)",(name,passWord, True))
                     con.commit()
                     con.close()
                 return render_template('successformsubmission.html')
@@ -193,6 +198,24 @@ def logout():
 def successformsubmission():
     name=session.get('name', None)
     return render_template('successformsubmission.html')
+
+@app.route('/toggle_notifications', methods=['POST'])
+def toggle_notifications():
+    if 'username' not in session:
+        return redirect('/login')
+    username = session['username']
+    con = sqlite3.connect('user1.db')
+    c = con.cursor()
+    c.execute("SELECT notifications FROM user1 WHERE name = ?", (username,))
+    current_notifications = c.fetchone()
+    if current_notifications is not None:
+        new_notifications = not current_notifications[0] 
+        c.execute("UPDATE user1 SET notifications = ? WHERE name = ?", (new_notifications, username))
+        con.commit()
+        con.close()
+        return redirect('/home')
+    else:
+        con.close()
 
 def notify():
     update_data()

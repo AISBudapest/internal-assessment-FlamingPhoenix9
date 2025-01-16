@@ -78,6 +78,18 @@
                     }
                 </script>
                 <p style="font-size: 20px">Linked Email: {{ email }}</p>
+    
+                <p>Notifications are {% if notifications_enabled %}enabled{% else %}disabled{% endif %}
+                    <form method="POST" action="{{ url_for('toggle_notifications') }}">
+                        {% if notifications_enabled %}
+                            <button  class="anchor-button" type="submit">Turn Off Notifications</button>
+                        {% else %}
+                            <button  class="anchor-button" type="submit">Turn On Notifications</button>
+                        {% endif %}
+                    </form>
+
+                </p>
+    
                 <div class="header-menu-section">
                     <p><a class="anchor-button" href="{{url_for('logout')}}"><strong>Logout</strong></a></p>
                 </div>

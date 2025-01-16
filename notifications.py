@@ -25,6 +25,13 @@ def notify_users(active_map_names):
     
     for user_name, map_name in favorite_maps:
         print("working...")
+        c.execute("SELECT notifications FROM user1 WHERE name = ?", (user_name,))
+        notifications_enabled = c.fetchone()
+        
+        if not notifications_enabled or notifications_enabled[0] != 1:
+            print(f"Notifications disabled for {user_name}.")
+            continue
+        
         if map_name in active_map_names:
             today = datetime.now().strftime('%Y-%m-%d')
             
