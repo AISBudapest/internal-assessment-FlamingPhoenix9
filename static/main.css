@@ -51,6 +51,7 @@ li {
     display: inline-block;
     align-items: flex-start;    
     text-align: left;
+    margin: 25px;
 }
 .map-row {
     display: flex;   

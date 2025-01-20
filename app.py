@@ -46,7 +46,6 @@ def create_table():
     con = sqlite3.connect('user1.db')
     c = con.cursor()
     c.execute("CREATE TABLE IF NOT EXISTS user1(name text, passWord text, email text, notifications boolean)")
-    c.execute("CREATE TABLE IF NOT EXISTS currentMaps(map_name text)")
     c.execute("CREATE TABLE IF NOT EXISTS favoriteMaps(user_name text, map_name text)")
     c.execute("CREATE TABLE IF NOT EXISTS notifications (map_name text,user_name text,notified_date text)")
     con.commit()
