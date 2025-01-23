@@ -88,9 +88,7 @@ def home():
                         c.execute("SELECT map_name FROM favoriteMaps WHERE user_name = ?", (username,))
                         user_favorites = [row[0] for row in c.fetchall()]
                 else:
-                    message = f"'{map_name}' is not an active or upcoming map."
-            else:
-                message = "Please enter a valid map name."
+                    message = f"'{map_name}' is not an valid map name."
 
             if email:
                 c.execute("UPDATE user1 SET email = ? WHERE name = ?", (email, username))
